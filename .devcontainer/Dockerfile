@@ -1,15 +1,20 @@
 FROM mcr.microsoft.com/devcontainers/universal:2-linux
-# Install the xz-utils package
-RUN apt-get update && apt-get install -y xz-utils curl
 
-# Install Node.js (LTS) + npm
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs
+# Use root to install system + language tools
+USER root
 
-# Install Vue CLI globally
+# 1) System packages
+RUN apt-get update && apt-get install -y xz-utils
+
+# 2) Vue.js tooling (Vue CLI)
+# universal:2-linux already includes Node + npm
 RUN npm install -g @vue/cli
 
-RUN pip install --no-cache-dir flask
+# 3) Flask (Python web framework)
+RUN pip3 install Flask
 
-# Set working directory
-WORKDIR /workspace
+# Go back to normal dev user
+USER vscode
+
+# Default working directory inside the container
+WORKDIR /workspaces/fouad_aoude
